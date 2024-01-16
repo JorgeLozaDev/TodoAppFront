@@ -1,11 +1,4 @@
-import {
-    Button,
-    Card,
-    CardActions,
-    CardContent,
-    Grid,
-    Typography
-} from "@mui/material";
+import { Box, Grid } from "@mui/material";
 
 const Home = () => {
   return (
@@ -19,14 +12,21 @@ const Home = () => {
         sx={{ minHeight: "100vh" }}
       >
         <Grid item xs></Grid>
-        <Grid
-          item
-          xs={8}
-          direction="row"
-          justifyContent="center"
-          alignItems="center"
-        >
-          
+        <Grid item xs={8}>
+          <Box
+            component="button"
+            xs={{
+              border: 3,
+              borderColor: "common.black",
+              borderRadius: 2,
+              width: 20,
+            }}
+            onClick={() => {
+              console.info("I'm a button.");
+            }}
+          >
+            Button Link
+          </Box>
         </Grid>
         <Grid item xs></Grid>
       </Grid>
