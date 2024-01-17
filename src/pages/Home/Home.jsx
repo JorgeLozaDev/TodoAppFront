@@ -1,6 +1,20 @@
-import { Box, Grid } from "@mui/material";
+import styled from "@emotion/styled";
+import { Button, Grid } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const BootstrapButton = styled(Button)({
+    border: "1px solid",
+    color: "#000",
+    lineHeight: 1.5,
+    backgroundColor: "#fff",
+    borderColor: "#000",
+    boxShadow: "4px 7px 0px 0px #000000",
+    "&:hover": {
+      boxShadow: "3px 3px 1px #000",
+    },
+  });
+  const navigate = useNavigate()
   return (
     <>
       <Grid
@@ -13,20 +27,7 @@ const Home = () => {
       >
         <Grid item xs></Grid>
         <Grid item xs={8}>
-          <Box
-            component="button"
-            xs={{
-              border: 3,
-              borderColor: "common.black",
-              borderRadius: 2,
-              width: 20,
-            }}
-            onClick={() => {
-              console.info("I'm a button.");
-            }}
-          >
-            Button Link
-          </Box>
+          <BootstrapButton onClick={()=>(navigate("/signin"))}>Sign In</BootstrapButton>
         </Grid>
         <Grid item xs></Grid>
       </Grid>
