@@ -9,7 +9,7 @@ const Body = () => {
       <Route path="*" element={<Navigate to="/" />} />
       <Route path="/" element={<Home />} />
       <Route path="/signin" element={<SignIn />} />
-      <Route path="/signin" element={<Register />} />
+      <Route path="/register" element={<Register />} />
     </Routes>
   );
 };
