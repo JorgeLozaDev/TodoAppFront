@@ -7,18 +7,20 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
 import RegisterForm from "./Components/RegisterForm";
+import { general } from "../../services/apiCalls";
+import { ToastContainer, Toasty } from "../../common/CustomToasty/CustomToasty";
 
 const defaultTheme = createTheme();
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
-    firstName: "",
+    username: "",
     email: "",
     password: "",
   });
 
   const [errors, setErrors] = useState({
-    firstName: "",
+    username: "",
     email: "",
     password: "",
   });
@@ -34,7 +36,7 @@ export default function SignUp() {
 
     // Validaciones al hacer submit
     const newErrors = {
-      firstName: formData.firstName ? "" : "Este campo es obligatorio",
+      username: formData.username ? "" : "Este campo es obligatorio",
       email: isEmailValid(formData.email)
         ? ""
         : "Por favor, introduce un email válido",
@@ -50,6 +52,27 @@ export default function SignUp() {
     if (Object.values(newErrors).every((error) => error === "")) {
       // Realizar acciones de envío o validación final aquí
       console.log(formData);
+      // Llamada a la función general para el login
+      general("post", "user/addUser", null, formData)
+        .then((data) => {
+          // Lógica después de la llamada exitosa
+          Toasty({
+            message: "Datos correctos ...logueando",
+            type: "success",
+          });
+
+          console.log(data);
+          // dispatch(login({ credentials: data.token }));
+
+          // setTimeout(() => {
+          //   navigate("/profile");
+          // }, 2500);
+        })
+        .catch((error) => {
+          // Lógica de manejo de errores
+          console.error("Error en la llamada de login:", error);
+          // Otro manejo de errores que desees realizar
+        });
     }
   };
 
@@ -63,6 +86,7 @@ export default function SignUp() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
+      <ToastContainer />
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
