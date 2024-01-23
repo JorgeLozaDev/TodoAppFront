@@ -12,16 +12,16 @@ const RegisterForm = ({
         <Grid item xs={12}>
           <TextField
             autoComplete="given-name"
-            name="firstName"
+            name="username"
             required
             fullWidth
-            id="firstName"
-            label="First Name"
+            id="username"
+            label="User Name"
             autoFocus
-            value={formData.firstName}
+            value={formData.username}
             onChange={handleInputChange}
-            error={Boolean(errors.firstName)}
-            helperText={errors.firstName}
+            error={Boolean(errors.username)}
+            helperText={errors.username}
           />
         </Grid>
 
