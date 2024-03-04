@@ -51,7 +51,6 @@ export default function SignUp() {
     // Comprobar si hay errores antes de continuar
     if (Object.values(newErrors).every((error) => error === "")) {
       // Realizar acciones de envío o validación final aquí
-      console.log(formData);
       // Llamada a la función general para el login
       general("post", "user/addUser", null, formData)
         .then((data) => {
@@ -61,7 +60,6 @@ export default function SignUp() {
             type: "success",
           });
 
-          console.log(data);
           // dispatch(login({ credentials: data.token }));
 
           // setTimeout(() => {
@@ -70,8 +68,26 @@ export default function SignUp() {
         })
         .catch((error) => {
           // Lógica de manejo de errores
-          console.error("Error en la llamada de login:", error);
-          // Otro manejo de errores que desees realizar
+          // Manejar el error de Axios
+          if (error.response) {
+            // El servidor respondió con un código de estado diferente de 2xx
+            Toasty({
+              message: `Error: ${error.response.status} - ${error.response.data.message}`,
+              type: "error",
+            });
+          } else if (error.request) {
+            // La solicitud fue hecha, pero no se recibió una respuesta
+            Toasty({
+              message: "No se recibió respuesta del servidor",
+              type: "error",
+            });
+          } else {
+            // Algo sucedió al configurar la solicitud que desencadenó un error
+            Toasty({
+              message: "Error al configurar la solicitud",
+              type: "error",
+            });
+          }
         });
     }
   };
