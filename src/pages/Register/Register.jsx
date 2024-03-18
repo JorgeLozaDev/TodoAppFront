@@ -104,7 +104,6 @@ export default function SignUp() {
     <ThemeProvider theme={defaultTheme}>
       <ToastContainer />
       <Container component="main" maxWidth="xs">
-        <CssBaseline />
         <Box
           sx={{
             marginTop: 8,
