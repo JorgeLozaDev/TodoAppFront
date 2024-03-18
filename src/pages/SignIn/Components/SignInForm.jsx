@@ -38,9 +38,10 @@ const SignInForm = ({formData, handleSubmit, handleInputChange, errors}) => {
       </Button>
       <Grid container justifyContent="center">
         <Grid item>
-          <Link href="/register" variant="body2">
-            {"Don't have an account? Sign Up"}
+          <Link to="/register" variant="body2">
+            {"¿No tienes cuenta? Registrate"}
           </Link>
+          
         </Grid>
       </Grid>
     </>
