@@ -6,7 +6,8 @@ import CssBaseline from "@mui/material/CssBaseline";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
 import SignInForm from "./Components/SignInForm";
-
+import { ToastContainer, Toasty } from "../../common/CustomToasty/CustomToasty";
+import { general } from "../../services/apiCalls";
 
 export default function SignIn() {
   const [formData, setFormData] = useState({
@@ -50,6 +51,34 @@ export default function SignIn() {
         password: data.get("password"),
       });
     }
+ console.log(formData);
+    general("post", "user/login", null, formData)
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => {
+        // Lógica de manejo de errores
+        // Manejar el error de Axios
+        if (error.response) {
+          // El servidor respondió con un código de estado diferente de 2xx
+          Toasty({
+            message: `Error: ${error.response.status} - ${error.response.data}`,
+            type: "error",
+          });
+        } else if (error.request) {
+          // La solicitud fue hecha, pero no se recibió una respuesta
+          Toasty({
+            message: "No se recibió respuesta del servidor",
+            type: "error",
+          });
+        } else {
+          // Algo sucedió al configurar la solicitud que desencadenó un error
+          Toasty({
+            message: "Error al configurar la solicitud",
+            type: "error",
+          });
+        }
+      });
   };
 
   const handleInputChange = (event) => {
@@ -62,8 +91,8 @@ export default function SignIn() {
 
   return (
     <>
+      <ToastContainer />
       <Container component="main" maxWidth="xs">
-        <CssBaseline />
         <Box
           sx={{
             marginTop: 8,
