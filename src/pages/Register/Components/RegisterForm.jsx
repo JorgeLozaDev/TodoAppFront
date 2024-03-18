@@ -1,4 +1,5 @@
-import { Button, Grid, Link, TextField } from "@mui/material";
+import { Button, Grid, TextField } from "@mui/material";
+import { Link } from "react-router-dom";
 
 const RegisterForm = ({
   formData,
@@ -54,15 +55,20 @@ const RegisterForm = ({
             helperText={errors.password}
           />
         </Grid>
-      </Grid>
-      <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-        Sign Up
-      </Button>
-      <Grid container justifyContent="center">
-        <Grid item>
-          <Link href="/signin" variant="body2">
-            Already have an account? Sign in
-          </Link>
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          sx={{ mt: 3, mb: 2 }}
+        >
+          Sign Up
+        </Button>
+        <Grid container justifyContent="center">
+          <Grid item>
+            <Link to="/signin" variant="body2">
+              {"¿Ya tienes  cuenta? Inicia sesión"}
+            </Link>
+          </Grid>
         </Grid>
       </Grid>
     </>
