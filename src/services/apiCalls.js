@@ -26,7 +26,7 @@ export const general = async (verbo, endpoint, header, data) => {
     }
 
     const response = await axios(axiosConfig);
-    return response.data;
+    return response;
   } catch (error) {
     // Manejo de errores (puedes personalizar según tus necesidades)
     console.error("Error en la llamada a la API:", error);
