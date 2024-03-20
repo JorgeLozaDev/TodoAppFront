@@ -2,13 +2,14 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
-import CssBaseline from "@mui/material/CssBaseline";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
-import RegisterForm from "./Components/RegisterForm";
-import { general } from "../../services/apiCalls";
 import { ToastContainer, Toasty } from "../../common/CustomToasty/CustomToasty";
+import { general } from "../../services/apiCalls";
+import RegisterForm from "./Components/RegisterForm";
+import { handleAxiosError } from "../../utils/axiosErrorHandler";
+import { isEmailValid } from "../../utils/helpers";
 
 const defaultTheme = createTheme();
 
@@ -24,12 +25,6 @@ export default function SignUp() {
     email: "",
     password: "",
   });
-
-  const isEmailValid = (email) => {
-    // Expresión regular simple para verificar el formato de un correo electrónico
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -53,7 +48,8 @@ export default function SignUp() {
       // Realizar acciones de envío o validación final aquí
       // Llamada a la función general para el login
       general("post", "user/addUser", null, formData)
-        .then((data) => {
+      .then((data) => {
+          console.log(data);
           // Lógica después de la llamada exitosa
           Toasty({
             message: "Datos correctos ...logueando",
@@ -67,27 +63,8 @@ export default function SignUp() {
           // }, 2500);
         })
         .catch((error) => {
-          // Lógica de manejo de errores
-          // Manejar el error de Axios
-          if (error.response) {
-            // El servidor respondió con un código de estado diferente de 2xx
-            Toasty({
-              message: `Error: ${error.response.status} - ${error.response.data.message}`,
-              type: "error",
-            });
-          } else if (error.request) {
-            // La solicitud fue hecha, pero no se recibió una respuesta
-            Toasty({
-              message: "No se recibió respuesta del servidor",
-              type: "error",
-            });
-          } else {
-            // Algo sucedió al configurar la solicitud que desencadenó un error
-            Toasty({
-              message: "Error al configurar la solicitud",
-              type: "error",
-            });
-          }
+          // Manejar el error de Axios utilizando la función importada
+          handleAxiosError(error);
         });
     }
   };
