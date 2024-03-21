@@ -4,11 +4,14 @@ import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
-import { ToastContainer } from "../../common/CustomToasty/CustomToasty";
+import { ToastContainer, Toasty } from "../../common/CustomToasty/CustomToasty";
 import { general } from "../../services/apiCalls";
 import { handleAxiosError } from "../../utils/axiosErrorHandler";
 import SignInForm from "./Components/SignInForm";
 import { isEmailValid } from "../../utils/helpers";
+import { useDispatch } from "react-redux";
+import { login } from "../userSlice";
+import { useNavigate } from "react-router-dom";
 
 export default function SignIn() {
   const [formData, setFormData] = useState({
@@ -20,7 +23,8 @@ export default function SignIn() {
     email: "",
     password: "",
   });
-
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const handleSubmit = (event) => {
     event.preventDefault();
 
@@ -41,7 +45,16 @@ export default function SignIn() {
     if (Object.values(newErrors).every((error) => error === "")) {
       general("post", "user/login", null, formData)
         .then((data) => {
-          console.log(data);
+          Toasty({
+            message: `Datos correctos ...logueando`,
+            type: "success",
+          });
+
+          dispatch(login({ credentials: data.data.token }));
+
+          setTimeout(() => {
+            navigate("/profile");
+          }, 2500);
         })
         .catch((error) => {
           // Manejar el error de Axios utilizando la función importada
