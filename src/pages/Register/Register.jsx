@@ -10,6 +10,9 @@ import { general } from "../../services/apiCalls";
 import RegisterForm from "./Components/RegisterForm";
 import { handleAxiosError } from "../../utils/axiosErrorHandler";
 import { isEmailValid } from "../../utils/helpers";
+import { useDispatch } from "react-redux";
+import { login } from "../userSlice";
+import { useNavigate } from "react-router-dom";
 
 const defaultTheme = createTheme();
 
@@ -25,6 +28,8 @@ export default function SignUp() {
     email: "",
     password: "",
   });
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -45,29 +50,35 @@ export default function SignUp() {
 
     // Comprobar si hay errores antes de continuar
     if (Object.values(newErrors).every((error) => error === "")) {
-      // Realizar acciones de envío o validación final aquí
       // Llamada a la función general para el login
-      general("post", "user/addUser", null, formData)
-      .then((data) => {
-          console.log(data);
-          // Lógica después de la llamada exitosa
-          Toasty({
-            message: "Datos correctos ...logueando",
-            type: "success",
-          });
 
-          // dispatch(login({ credentials: data.token }));
-
-          // setTimeout(() => {
-          //   navigate("/profile");
-          // }, 2500);
-        })
-        .catch((error) => {
-          // Manejar el error de Axios utilizando la función importada
-          handleAxiosError(error);
-        });
+      handleRegistrationAndLogin(formData);
     }
   };
+  async function handleRegistrationAndLogin(formData) {
+    try {
+      //primero añadimos el usuario
+      const registerResponse = await general(
+        "post",
+        "user/addUser",
+        null,
+        formData
+      );
+      //despues de añadirlo hacemos el login
+      const loginResponse = await general("post", "user/login", null, formData);
+      dispatch(login({ credentials: loginResponse.data.token }));
+
+      Toasty({
+        message: `Usuario registrado correctamente. Iniciando sesión...`,
+        type: "success",
+      });
+      setTimeout(() => {
+        navigate("/profile");
+      }, 2500);
+    } catch (error) {
+      handleAxiosError(error);
+    }
+  }
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
