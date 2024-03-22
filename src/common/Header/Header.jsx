@@ -10,7 +10,10 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { userDetails } from "../../pages/userSlice";
+import { useNavigate } from "react-router-dom";
 
 const settings = ["Logout"];
 
@@ -33,6 +36,15 @@ function Header() {
     setAnchorElUser(null);
   };
 
+  const token = useSelector(userDetails);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (token.credentials == "") {
+      navigate("/");
+    }
+  }, []);
+
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -42,7 +54,7 @@ function Header() {
             variant="h6"
             noWrap
             component="a"
-            href="#"
+            href="/"
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
