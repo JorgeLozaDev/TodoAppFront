@@ -1,7 +1,8 @@
-import { useSelector } from 'react-redux';
-import { userDetails } from '../userSlice';
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Container, Typography } from "@mui/material";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { userDetails } from "../userSlice";
 
 export const Profile = () => {
   const token = useSelector(userDetails);
@@ -13,6 +14,10 @@ export const Profile = () => {
     }
   }, []);
   return (
-    <div>Profile {token.credentials}</div>
-  )
-}
+    <>
+      <Container component="main" maxWidth="xs">
+        <Typography>Profile </Typography>
+      </Container>
+    </>
+  );
+};
