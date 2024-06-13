@@ -1,25 +1,39 @@
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
-
-import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
-import Tooltip from "@mui/material/Tooltip";
-import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
+import AppBar from "@mui/material/AppBar";
+import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import IconButton from "@mui/material/IconButton";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Toolbar from "@mui/material/Toolbar";
+import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
+import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { userDetails } from "../../pages/userSlice";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { logout, userDetails } from "../../pages/userSlice";
 
-const settings = ["Logout"];
+// Define los settings con un identificador único
+const settings = [
+  { id: "profile", label: "Profile", roles: ["user", "admin"] },
+  { id: "adminPanel", label: "Admin Panel", roles: ["admin"] },
+  { id: "logout", label: "Logout", roles: ["user", "admin"] },
+];
+
+const guestSettings = [
+  { id: "signIn", label: "Sign In" },
+  { id: "register", label: "Register" },
+];
 
 function Header() {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const [decode, setDecode] = useState(null);
+  const token = useSelector(userDetails);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // const handleOpenNavMenu = (event) => {
   //   setAnchorElNav(event.currentTarget);
@@ -36,14 +50,39 @@ function Header() {
     setAnchorElUser(null);
   };
 
-  const token = useSelector(userDetails);
-  const navigate = useNavigate();
-
   useEffect(() => {
     if (token.credentials == "") {
-      navigate("/");
+      setDecode(null);
+    } else {
+      setDecode(jwtDecode(token.credentials));
     }
-  }, []);
+  }, [token]);
+
+  const handleSettingClick = (settingId) => {
+    switch (settingId) {
+      case "profile":
+        navigate("/profile"); // Navega a la página de perfil
+        break;
+      case "adminPanel":
+        navigate("/admin"); // Navega a la página de admin
+        break;
+      case "logout":
+        dispatch(logout({ credentials: "" })); // Despacha la acción de logout
+        navigate("/"); // Navega a la página de inicio o login después del logout
+        break;
+      case "signIn":
+        navigate("/signin"); // Navega a la página de login
+        break;
+      case "register":
+        navigate("/register"); // Navega a la página de registro
+        break;
+      default:
+        break;
+    }
+    handleCloseUserMenu(); // Cierra el menú después de la acción
+  };
+
+  const userLoggedIn = token.credentials !== "";
 
   return (
     <AppBar position="static">
@@ -93,7 +132,7 @@ function Header() {
             variant="h5"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
+            href="/"
             sx={{
               mr: 2,
               display: { xs: "flex", md: "none" },
@@ -110,9 +149,16 @@ function Header() {
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}></Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
+            <Tooltip title="Abrir Menú">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar
+                  alt={userLoggedIn ? "User Avatar" : "Guest Avatar"}
+                  src={
+                    userLoggedIn
+                      ? "/static/images/avatar/2.jpg"
+                      : "/static/images/avatar/default.jpg"
+                  }
+                />
               </IconButton>
             </Tooltip>
             <Menu
@@ -131,11 +177,31 @@ function Header() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
+              {userLoggedIn
+                ? settings
+                    .filter(
+                      (setting) => decode && setting.roles.includes(decode.role)
+                    )
+                    .map((setting) => (
+                      <MenuItem
+                        key={setting.id}
+                        onClick={() => handleSettingClick(setting.id)}
+                      >
+                        <Typography textAlign="center">
+                          {setting.label}
+                        </Typography>
+                      </MenuItem>
+                    ))
+                : guestSettings.map((setting) => (
+                    <MenuItem
+                      key={setting.id}
+                      onClick={() => handleSettingClick(setting.id)}
+                    >
+                      <Typography textAlign="center">
+                        {setting.label}
+                      </Typography>
+                    </MenuItem>
+                  ))}
             </Menu>
           </Box>
         </Toolbar>
