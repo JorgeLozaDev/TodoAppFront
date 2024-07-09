@@ -49,7 +49,6 @@ function Header() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
-
   useEffect(() => {
     if (token.credentials == "") {
       setDecode(null);

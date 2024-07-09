@@ -2,6 +2,7 @@ import axios from "axios";
 
 const baseURL = "http://localhost:3000/";
 
+
 export const general = async (verbo, endpoint, header, data) => {
   // Validaciones para asegurar que se proporcionen el verbo y el endpoint
   if (!verbo || !endpoint) {
