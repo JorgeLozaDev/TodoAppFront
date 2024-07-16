@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Container, Typography, Box, Tabs, Tab } from "@mui/material";
 import PropTypes from "prop-types";
 import { userDetails } from "../userSlice";
+import { ProfileData } from "./components/ProfileData";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -56,39 +57,37 @@ export const Profile = () => {
   return (
     <Container component="main" maxWidth="lg">
       <Typography variant="h4" gutterBottom>
-        Profile
+        Perfil
       </Typography>
       <Box
-        sx={{ flexGrow: 1, bgcolor: "background.paper", display: "flex", height: 224 }}
+        sx={{
+          flexGrow: 1,
+          bgcolor: "background.paper",
+          display: "flex",
+          alignItems: "center",
+          height: "50vh",
+        }}
       >
         <Tabs
           orientation="vertical"
           variant="scrollable"
           value={value}
           onChange={handleChange}
-          aria-label="Vertical tabs example"
+          aria-label="Vertical tabs menu"
           sx={{ borderRight: 1, borderColor: "divider" }}
         >
           <Tab label="Personal Info" {...a11yProps(0)} />
-          <Tab label="Account Settings" {...a11yProps(1)} />
-          <Tab label="Orders" {...a11yProps(2)} />
-          <Tab label="Wishlist" {...a11yProps(3)} />
-          <Tab label="Security" {...a11yProps(4)} />
+          <Tab label="TO DOS" {...a11yProps(1)} />
+          <Tab label="Log out" {...a11yProps(2)} />
         </Tabs>
         <TabPanel value={value} index={0}>
-          Personal Info
+          <ProfileData />
         </TabPanel>
         <TabPanel value={value} index={1}>
           Account Settings
         </TabPanel>
         <TabPanel value={value} index={2}>
           Orders
-        </TabPanel>
-        <TabPanel value={value} index={3}>
-          Wishlist
-        </TabPanel>
-        <TabPanel value={value} index={4}>
-          Security
         </TabPanel>
       </Box>
     </Container>
