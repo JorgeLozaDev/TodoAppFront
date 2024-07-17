@@ -1,10 +1,10 @@
+import { Box, Container, Tab, Tabs, Typography } from "@mui/material";
+import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Container, Typography, Box, Tabs, Tab } from "@mui/material";
-import PropTypes from "prop-types";
 import { userDetails } from "../userSlice";
-import { ProfileData } from "./components/ProfileData";
+import { ProfileData } from "./components/ProfileData/ProfileData";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
