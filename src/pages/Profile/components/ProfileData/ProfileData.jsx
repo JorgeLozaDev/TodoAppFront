@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { Box, Typography, Button } from '@mui/material';
-import {ProfileForm} from '../ProfileForm/ProfileForm';
+import React, { useState } from "react";
+import { Box, Typography, Button } from "@mui/material";
+import { ProfileForm } from "../ProfileForm/ProfileForm";
 
 export const ProfileData = ({ userData, handleSave }) => {
   const [editMode, setEditMode] = useState(false);
-  
+
   // Datos de usuario por defecto
   userData = {
-    name: 'John Doe',
-    email: 'john.doe@example.com',
+    name: "John Doe",
+    email: "john.doe@example.com",
   };
 
   const [formData, setFormData] = useState(userData);
@@ -28,7 +28,7 @@ export const ProfileData = ({ userData, handleSave }) => {
   };
 
   return (
-    <Box>
+    <Box >
       {editMode ? (
         <ProfileForm
           formData={formData}
