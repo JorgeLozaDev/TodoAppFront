@@ -3,14 +3,14 @@ import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ToastContainer, Toasty } from "../../common/CustomToasty/CustomToasty";
 import { general } from "../../services/apiCalls";
 import { handleAxiosError } from "../../utils/axiosErrorHandler";
 import SignInForm from "./Components/SignInForm";
 import { isEmailValid } from "../../utils/helpers";
-import { useDispatch } from "react-redux";
-import { login } from "../userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { login, userDetails } from "../userSlice";
 import { useNavigate } from "react-router-dom";
 
 export default function SignIn() {
@@ -25,6 +25,8 @@ export default function SignIn() {
   });
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const token = useSelector(userDetails);
+
   const handleSubmit = (event) => {
     event.preventDefault();
 
@@ -71,6 +73,16 @@ export default function SignIn() {
     });
   };
 
+  useEffect(() => {
+    if (token.credentials != null) {
+      navigate("/profile");
+    }
+  }, [token,navigate]);
+
+  if (token.credentials!=null) {
+    // Si el token está presente, no renderizamos nada mientras redirigimos
+    return null;
+  }
   return (
     <>
       <ToastContainer />

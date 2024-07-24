@@ -4,14 +4,14 @@ import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ToastContainer, Toasty } from "../../common/CustomToasty/CustomToasty";
 import { general } from "../../services/apiCalls";
 import RegisterForm from "./Components/RegisterForm";
 import { handleAxiosError } from "../../utils/axiosErrorHandler";
 import { isEmailValid } from "../../utils/helpers";
-import { useDispatch } from "react-redux";
-import { login } from "../userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { login, userDetails } from "../userSlice";
 import { useNavigate } from "react-router-dom";
 
 const defaultTheme = createTheme();
@@ -30,6 +30,7 @@ export default function SignUp() {
   });
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const token = useSelector(userDetails);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -88,6 +89,18 @@ export default function SignUp() {
     });
   };
 
+  useEffect(() => {
+    if (token.credentials != null) {
+      navigate("/profile");
+    }
+  }, [token,navigate]);
+
+  if (token.credentials!=null) {
+    // Si el token está presente, no renderizamos nada mientras redirigimos
+    return null;
+  }
+
+  
   return (
     <ThemeProvider theme={defaultTheme}>
       <ToastContainer />
