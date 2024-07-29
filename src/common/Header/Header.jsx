@@ -55,14 +55,13 @@ function Header() {
       setDecode(null);
     } else {
       if (isTokenExpired(token.credentials)) {
-        console.log("first");
-
+        dispatch(logout()); // Despacha la acción de logout
+        navigate("/"); // Navega a la página de inicio o login después del logout
       } else {
         setDecode(jwtDecode(token.credentials));
       }
     }
   }, [token]);
-  
 
   const handleSettingClick = (settingId) => {
     switch (settingId) {
