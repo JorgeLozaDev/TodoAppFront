@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { userDetails } from "../userSlice";
 import { ProfileData } from "./components/ProfileData/ProfileData";
+import { jwtDecode } from "jwt-decode";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -49,7 +50,8 @@ export const Profile = () => {
       navigate("/");
     }
   }, [token, navigate]);
-
+  
+  
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -81,7 +83,7 @@ export const Profile = () => {
           <Tab label="Log out" {...a11yProps(2)} />
         </Tabs>
         <TabPanel value={value} index={0}>
-          <ProfileData />
+          <ProfileData userData={token.credentials} />
         </TabPanel>
         <TabPanel value={value} index={1}>
           Account Settings
