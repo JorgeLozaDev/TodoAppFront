@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { userDetails } from "../userSlice";
 import { ProfileData } from "./components/ProfileData/ProfileData";
-import { jwtDecode } from "jwt-decode";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
