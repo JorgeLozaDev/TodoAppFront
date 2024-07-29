@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout, userDetails } from "../../pages/userSlice";
+import { isTokenExpired } from "../../utils/helpers";
 
 // Define los settings con un identificador único
 const settings = [
@@ -50,12 +51,18 @@ function Header() {
     setAnchorElUser(null);
   };
   useEffect(() => {
-    if (token.credentials == "") {
+    if (token.credentials == null) {
       setDecode(null);
     } else {
-      setDecode(jwtDecode(token.credentials));
+      if (isTokenExpired(token.credentials)) {
+        console.log("first");
+
+      } else {
+        setDecode(jwtDecode(token.credentials));
+      }
     }
   }, [token]);
+  
 
   const handleSettingClick = (settingId) => {
     switch (settingId) {
@@ -66,7 +73,7 @@ function Header() {
         navigate("/admin"); // Navega a la página de admin
         break;
       case "logout":
-        dispatch(logout({ credentials: "" })); // Despacha la acción de logout
+        dispatch(logout()); // Despacha la acción de logout
         navigate("/"); // Navega a la página de inicio o login después del logout
         break;
       case "signIn":
@@ -81,7 +88,7 @@ function Header() {
     handleCloseUserMenu(); // Cierra el menú después de la acción
   };
 
-  const userLoggedIn = token.credentials !== "";
+  const userLoggedIn = token.credentials !== null;
 
   return (
     <AppBar position="static">
