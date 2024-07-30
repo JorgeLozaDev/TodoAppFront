@@ -10,6 +10,29 @@ export const ProfileForm = ({
   return (
     <>
       <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
+        <Box sx={{ mb: 2 }}>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            disabled
+            // fullWidth
+            id="email"
+            label="Correo Electrónico"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            error={Boolean(errors.email)}
+            FormHelperTextProps={{ style: { margin: 0, height: "20px" } }}
+          />
+          <Typography
+            variant="caption"
+            color="error"
+            sx={{ display: "block", height: "20px" }}
+          >
+            {errors.email}
+          </Typography>
+        </Box>
         <Box sx={{ mb: 2, width: 600, maxWidth: "100%" }}>
           <TextField
             variant="outlined"
@@ -37,36 +60,13 @@ export const ProfileForm = ({
           <TextField
             variant="outlined"
             margin="normal"
-            required
-            // fullWidth
-            id="email"
-            label="Correo Electrónico"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            error={Boolean(errors.email)}
-            FormHelperTextProps={{ style: { margin: 0, height: "20px" } }}
-          />
-          <Typography
-            variant="caption"
-            color="error"
-            sx={{ display: "block", height: "20px" }}
-          >
-            {errors.email}
-          </Typography>
-        </Box>
-        <Box sx={{ mb: 2 }}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
             // fullWidth
             id="password"
             label="Password"
             name="password"
             type="password"
             autoComplete="current-password"
-            value={formData.password}
+            value={formData.password || ""}
             onChange={handleInputChange}
             error={Boolean(errors.password)}
             FormHelperTextProps={{ style: { margin: 0, height: "20px" } }}
