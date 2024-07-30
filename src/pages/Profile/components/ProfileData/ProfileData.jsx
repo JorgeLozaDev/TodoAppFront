@@ -1,5 +1,7 @@
 import { Box, Button, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { ToastContainer } from "react-toastify";
+import { Toasty } from "../../../../common/CustomToasty/CustomToasty";
 import { general } from "../../../../services/apiCalls";
 import { handleAxiosError } from "../../../../utils/axiosErrorHandler";
 import { ProfileForm } from "../ProfileForm/ProfileForm";
@@ -22,7 +24,7 @@ export const ProfileData = ({ userData, handleSave }) => {
   const [formData, setFormData] = useState({
     nombre: "",
     email: "",
-    password: null,
+    password: "",
   });
 
   const handleEditClick = () => {
@@ -33,13 +35,6 @@ export const ProfileData = ({ userData, handleSave }) => {
     setEditMode(false);
     setFormData(userDataInicial); // Reset form data on cancel
   };
-
-  const handleSubmit = (event) => {
-    // handleSave(updatedData);
-    setEditMode(false);
-  };
-
-  // const { id } = userData;
 
   useEffect(() => {
     general("get", "user/profile", userData, null)
@@ -55,9 +50,9 @@ export const ProfileData = ({ userData, handleSave }) => {
   const validate = (fieldValues = formData) => {
     let tempErrors = { ...errors };
 
-    if ("name" in fieldValues)
-      tempErrors.name = fieldValues.name
-        ? fieldValues.name.length >= 3
+    if ("nombre" in fieldValues)
+      tempErrors.name = fieldValues.nombre
+        ? fieldValues.nombre.length >= 3
           ? ""
           : "El nombre debe tener al menos 3 caracteres."
         : "El nombre es requerido.";
@@ -80,34 +75,67 @@ export const ProfileData = ({ userData, handleSave }) => {
       ...formData,
       [name]: value,
     });
-    validate({ [name]: value });
+    // validate({ [name]: value });
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (validate(formData)) {
+      setEditMode(false);
+      general("put", "user/updateprofile", userData, formData)
+        .then((data) => {
+          
+          Toasty({
+            message: data.data.message,
+            type: "success",
+          });
+          setuserDataInicial({...formData})
+        })
+        .catch((error) => {
+          // Manejar el error de Axios utilizando la función importada
+          handleAxiosError(error);
+        });
+    } else {
+      console.log(validate(formData));
+      Toasty({
+        message: `Comprueba los datos`,
+        type: "error",
+      });
+    }
   };
 
   return (
-    <Box>
-      {editMode ? (
-        <ProfileForm
-          formData={formData}
-          handleSubmit={handleSubmit}
-          handleInputChange={handleInputChange}
-          handleCancelClick={handleCancelClick}
-          errors={errors}
-        />
-      ) : (
-        <Box>
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="h6">Nombre:</Typography>
-            <Typography variant="body2">{userDataInicial.nombre}</Typography>
+    <>
+      <ToastContainer />
+      <Box>
+        {editMode ? (
+          <ProfileForm
+            formData={formData}
+            handleSubmit={handleSubmit}
+            handleInputChange={handleInputChange}
+            handleCancelClick={handleCancelClick}
+            errors={errors}
+          />
+        ) : (
+          <Box>
+            <Box sx={{ mb: 2 }}>
+              <Typography variant="h6">Nombre:</Typography>
+              <Typography variant="body2">{userDataInicial.nombre}</Typography>
+            </Box>
+            <Box sx={{ mb: 2 }}>
+              <Typography variant="h6">Email:</Typography>
+              <Typography variant="body2">{userDataInicial.email}</Typography>
+            </Box>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleEditClick}
+            >
+              Modificar
+            </Button>
           </Box>
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="h6">Email:</Typography>
-            <Typography variant="body2">{userDataInicial.email}</Typography>
-          </Box>
-          <Button variant="contained" color="primary" onClick={handleEditClick}>
-            Modificar
-          </Button>
-        </Box>
-      )}
-    </Box>
+        )}
+      </Box>
+    </>
   );
 };
