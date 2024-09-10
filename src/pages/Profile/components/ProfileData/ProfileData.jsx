@@ -1,12 +1,17 @@
 import { Box, Button, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { Toasty } from "../../../../common/CustomToasty/CustomToasty";
 import { general } from "../../../../services/apiCalls";
 import { handleAxiosError } from "../../../../utils/axiosErrorHandler";
+import { logout } from "../../pages/userSlice";
 import { ProfileForm } from "../ProfileForm/ProfileForm";
 
 export const ProfileData = ({ userData, handleSave }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [editMode, setEditMode] = useState(false);
   const [errors, setErrors] = useState({
     nombre: "",
@@ -84,19 +89,28 @@ export const ProfileData = ({ userData, handleSave }) => {
       setEditMode(false);
       general("put", "user/updateprofile", userData, formData)
         .then((data) => {
-          
-          Toasty({
-            message: data.data.message,
-            type: "success",
-          });
-          setuserDataInicial({...formData})
+          if (data.data.token) {
+            Toasty({
+              message: data.data.message,
+              type: "success",
+            });
+            setTimeout(() => {
+              dispatch(logout());
+              navigate("/");
+            }, 2500);
+          } else {
+            Toasty({
+              message: data.data.message,
+              type: "success",
+            });
+            setuserDataInicial({ ...formData });
+          }
         })
         .catch((error) => {
           // Manejar el error de Axios utilizando la función importada
           handleAxiosError(error);
         });
     } else {
-      console.log(validate(formData));
       Toasty({
         message: `Comprueba los datos`,
         type: "error",
