@@ -6,7 +6,8 @@ import { ToastContainer } from "react-toastify";
 import { Toasty } from "../../../../common/CustomToasty/CustomToasty";
 import { general } from "../../../../services/apiCalls";
 import { handleAxiosError } from "../../../../utils/axiosErrorHandler";
-import { logout } from "../../pages/userSlice";
+import { isTokenExpired } from "../../../../utils/helpers";
+import { logout } from "../../../userSlice";
 import { ProfileForm } from "../ProfileForm/ProfileForm";
 
 export const ProfileData = ({ userData, handleSave }) => {
@@ -42,14 +43,19 @@ export const ProfileData = ({ userData, handleSave }) => {
   };
 
   useEffect(() => {
-    general("get", "user/profile", userData, null)
-      .then((data) => {
-        setFormData(data.data);
-        setuserDataInicial(data.data);
-      })
-      .catch((error) => {
-        handleAxiosError(error);
-      });
+    if (isTokenExpired(userData)) {
+      dispatch(logout()); // Despacha la acción de logout
+      navigate("/"); // Navega a la página de inicio o login después del logout
+    } else {
+      general("get", "user/profile", userData, null)
+        .then((data) => {
+          setFormData(data.data);
+          setuserDataInicial(data.data);
+        })
+        .catch((error) => {
+          handleAxiosError(error);
+        });
+    }
   }, []);
 
   const validate = (fieldValues = formData) => {
