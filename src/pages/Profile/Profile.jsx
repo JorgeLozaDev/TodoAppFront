@@ -3,8 +3,10 @@ import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { isTokenExpired } from "../../utils/helpers";
 import { userDetails } from "../userSlice";
 import { ProfileData } from "./components/ProfileData/ProfileData";
+import TodoList from "./components/Todo/TodoList/TodoList";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -14,7 +16,7 @@ function TabPanel(props) {
       role="tabpanel"
       hidden={value !== index}
       id={`vertical-tabpanel-${index}`}
-      aria-labelledby={`vertical-tab-${index}`}
+      aria-labelledby={`vertical-tab-${index}`} 
       {...other}
     >
       {value === index && (
@@ -45,7 +47,7 @@ export const Profile = () => {
   const [value, setValue] = useState(0);
 
   useEffect(() => {
-    if (token.credentials === "") {
+    if (token.credentials === "" || isTokenExpired(token.credentials)) {
       navigate("/");
     }
   }, [token, navigate]);
@@ -85,7 +87,7 @@ export const Profile = () => {
           <ProfileData userData={token.credentials} />
         </TabPanel>
         <TabPanel value={value} index={1}>
-          Account Settings
+          <TodoList />
         </TabPanel>
         <TabPanel value={value} index={2}>
           Orders
