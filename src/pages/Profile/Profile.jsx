@@ -6,7 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { isTokenExpired } from "../../utils/helpers";
 import { userDetails } from "../userSlice";
 import { ProfileData } from "./components/ProfileData/ProfileData";
-import TodoList from "./components/Todo/TodoList/TodoList";
+import { TodoList } from "./components/Todo/TodoList/TodoList";
+
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
