@@ -1,19 +1,33 @@
+import { Textarea } from "@mui/joy";
 import { Button, TextField, Typography } from "@mui/material";
 import { Box, Container } from "@mui/system";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DemoContainer, DemoItem } from "@mui/x-date-pickers/internals/demo";
+import { MobileDateTimePicker } from "@mui/x-date-pickers/MobileDateTimePicker";
+import dayjs from "dayjs";
+import "dayjs/locale/es";
 import React, { useEffect, useState } from "react";
-import { isEmailValid, isTokenExpired } from "../../../../../utils/helpers";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { logout, userDetails } from "../../../../userSlice";
-import { Toasty } from "../../../../../common/CustomToasty/CustomToasty";
 import { ToastContainer } from "react-toastify";
-import { Textarea } from "@mui/joy";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { Toasty } from "../../../../../common/CustomToasty/CustomToasty";
+import { isEmailValid, isTokenExpired } from "../../../../../utils/helpers";
+import { logout, userDetails } from "../../../../userSlice";
+import updateLocale from "dayjs/plugin/updateLocale";
+
+dayjs.extend(updateLocale);
+
+dayjs.updateLocale("es", {
+  // Sunday = 0, Monday = 1.
+  weekStart: 1,
+});
 
 export const TodoForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [value, setValue] = React.useState(dayjs());
+
   const [errors, setErrors] = useState({
     email: "",
     password: "",
@@ -82,8 +96,19 @@ export const TodoForm = () => {
             />
           </Box>
           <Box sx={{ mb: 2 }}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker />
+            <LocalizationProvider
+              dateAdapter={AdapterDayjs}
+              adapterLocale="es"
+              timezone="Europe/Paris"
+            >
+              <DemoContainer components={["MobileDateTimePicker"]}>
+                <DemoItem label="Mobile variant">
+                  <MobileDateTimePicker
+                    disablePast={true}
+                    defaultValue={value}
+                  />
+                </DemoItem>
+              </DemoContainer>
             </LocalizationProvider>
           </Box>
           <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
