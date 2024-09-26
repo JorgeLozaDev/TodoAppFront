@@ -1,193 +1,156 @@
-import { Textarea } from "@mui/joy";
-import { Button, TextField, Typography } from "@mui/material";
-import { Box, Container } from "@mui/system";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DemoContainer, DemoItem } from "@mui/x-date-pickers/internals/demo";
-import { MobileDateTimePicker } from "@mui/x-date-pickers/MobileDateTimePicker";
 import dayjs from "dayjs";
-import "dayjs/locale/es";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
-import { Toasty } from "../../../../../common/CustomToasty/CustomToasty";
-import { isEmailValid, isTokenExpired } from "../../../../../utils/helpers";
+import { isTokenExpired } from "../../../../../utils/helpers";
 import { logout, userDetails } from "../../../../userSlice";
+import { FormTodo } from "./components/FormTodo";
 import updateLocale from "dayjs/plugin/updateLocale";
+import "dayjs/locale/es";
 
 dayjs.extend(updateLocale);
 
 dayjs.updateLocale("es", {
-  // Sunday = 0, Monday = 1.
   weekStart: 1,
 });
 
 export const TodoForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [value, setValue] = React.useState(dayjs());
-
-  const [errors, setErrors] = useState({
-    email: "",
-    password: "",
-  });
   const token = useSelector(userDetails);
+  const [tiempo, setTiempo] = useState(dayjs().add(10, "minute"));
+  const [tiempoFin, settiempoFin] = useState(dayjs().add(15, "minute"));
+  const [estado, setEstado] = useState("");
+  const [prioridad, setPrioridad] = useState("");
+  const [formValues, setFormValues] = useState({
+    tituloTarea: "",
+    descripcion: "",
+  });
+  const [errors, setErrors] = useState({
+    tituloTarea: "",
+    descripcion: "",
+    tiempo: "",
+    tiempoFin: "",
+    estado: "",
+    prioridad: "",
+  });
+
   useEffect(() => {
     if (isTokenExpired(token.credentials)) {
-      dispatch(logout()); // Despacha la acción de logout
-      navigate("/"); // Navega a la página de inicio o login después del logout
+      dispatch(logout());
+      navigate("/");
     }
-  }, []);
+  }, [token, dispatch, navigate]);
 
-  const onSubmit = (event) => {
+  const handleEstadoChange = (event) => {
+    setEstado(event.target.value);
+    if (!event.target.value) {
+      setErrors((prev) => ({ ...prev, estado: "El estado es obligatorio" }));
+    } else {
+      setErrors((prev) => ({ ...prev, estado: "" }));
+    }
+  };
+
+  const handlePrioridadChange = (event) => {
+    setPrioridad(event.target.value);
+    if (!event.target.value) {
+      setErrors((prev) => ({
+        ...prev,
+        prioridad: "La prioridad es obligatoria",
+      }));
+    } else {
+      setErrors((prev) => ({ ...prev, prioridad: "" }));
+    }
+  };
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormValues({ ...formValues, [name]: value });
+
+    if (name === "tituloTarea" && !value) {
+      setErrors((prev) => ({
+        ...prev,
+        tituloTarea: "El título es obligatorio",
+      }));
+    } else if (name === "tituloTarea") {
+      setErrors((prev) => ({ ...prev, tituloTarea: "" }));
+    }
+
+    if (name === "descripcion" && value.length < 10) {
+      setErrors((prev) => ({
+        ...prev,
+        descripcion: "La descripción debe tener al menos 10 caracteres",
+      }));
+    } else if (name === "descripcion") {
+      setErrors((prev) => ({ ...prev, descripcion: "" }));
+    }
+  };
+
+  const handleSubmit = (event) => {
     event.preventDefault();
-    // Validaciones al hacer submit
-    const newErrors = {
-      email: isEmailValid(formData.email)
-        ? ""
-        : "Por favor, introduce un email válido",
-      password:
-        formData.password.length >= 6
-          ? ""
-          : "La contraseña debe tener al menos 6 caracteres",
-    };
+    let formIsValid = true;
 
-    setErrors(newErrors);
+    // Validaciones al enviar el formulario
+    if (!formValues.tituloTarea) {
+      setErrors((prev) => ({
+        ...prev,
+        tituloTarea: "El título es obligatorio",
+      }));
+      formIsValid = false;
+    }
 
-    // Comprobar si hay errores antes de continuar
-    if (Object.values(newErrors).every((error) => error === "")) {
-      Toasty({
-        message: `Datos correctos ...logueando`,
-        type: "success",
+    if (formValues.descripcion.length < 10) {
+      setErrors((prev) => ({
+        ...prev,
+        descripcion: "La descripción debe tener al menos 10 caracteres",
+      }));
+      formIsValid = false;
+    }
+
+    if (!estado) {
+      setErrors((prev) => ({ ...prev, estado: "El estado es obligatorio" }));
+      formIsValid = false;
+    }
+
+    if (!prioridad) {
+      setErrors((prev) => ({
+        ...prev,
+        prioridad: "La prioridad es obligatoria",
+      }));
+      formIsValid = false;
+    }
+
+    if (formIsValid) {
+      // Aquí enviaríamos el formulario si todas las validaciones pasan
+      console.log("Formulario enviado:", {
+        formValues,
+        estado,
+        prioridad,
+        tiempo,
+        tiempoFin,
       });
     }
   };
-  const handleInputChange = () => {};
-  const handleCancelClick = () => {};
+
+  const handleCancelClick = () => {
+    // Lógica para manejar el click de "Cancelar"
+  };
 
   return (
-    <>
-      <ToastContainer />
-      <Container component="main" maxWidth="md">
-        <Box component="form" onSubmit={onSubmit} sx={{ mt: 3 }}>
-          <Box sx={{ mb: 2 }}>
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              disabled
-              fullWidth
-              id="tituloTarea"
-              label="titulo tarea"
-              name="tituloTarea"
-              onChange={handleInputChange}
-              // error={Boolean(errors.email)}
-              FormHelperTextProps={{ style: { margin: 0, height: "20px" } }}
-            />
-          </Box>
-          <Box sx={{ mb: 2 }}>
-            <Textarea
-              color="neutral"
-              minRows={3}
-              placeholder="Descripción de la tarea"
-              size="lg"
-              variant="outlined"
-            />
-          </Box>
-          <Box sx={{ mb: 2 }}>
-            <LocalizationProvider
-              dateAdapter={AdapterDayjs}
-              adapterLocale="es"
-              timezone="Europe/Paris"
-            >
-              <DemoContainer components={["MobileDateTimePicker"]}>
-                <DemoItem label="Mobile variant">
-                  <MobileDateTimePicker
-                    disablePast={true}
-                    defaultValue={value}
-                  />
-                </DemoItem>
-              </DemoContainer>
-            </LocalizationProvider>
-          </Box>
-          <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              disabled
-              fullWidth
-              id="email"
-              label="Correo Electrónico"
-              name="email"
-              onChange={handleInputChange}
-              error={Boolean(errors.email)}
-              FormHelperTextProps={{ style: { margin: 0, height: "20px" } }}
-            />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="name"
-              label="Nombre"
-              name="nombre"
-              onChange={handleInputChange}
-              error={Boolean(errors.name)}
-              FormHelperTextProps={{ style: { margin: 0, height: "20px" } }}
-            />
-          </Box>
-          <Typography
-            variant="caption"
-            color="error"
-            sx={{ display: "block", height: "20px" }}
-          >
-            {errors.email}
-          </Typography>
-          <Typography
-            variant="caption"
-            color="error"
-            sx={{ display: "block", height: "20px" }}
-          >
-            {errors.name}
-          </Typography>
-
-          <Box sx={{ mb: 2 }}>
-            <TextField
-              variant="outlined"
-              margin="normal"
-              id="password"
-              label="Password"
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              onChange={handleInputChange}
-              error={Boolean(errors.password)}
-              FormHelperTextProps={{ style: { margin: 0, height: "20px" } }}
-            />
-            <Typography
-              variant="caption"
-              color="error"
-              sx={{ display: "block", height: "20px" }}
-            >
-              {errors.password}
-            </Typography>
-          </Box>
-          <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
-            <Button type="submit" variant="contained" color="primary">
-              Guardar
-            </Button>
-            <Button
-              variant="outlined"
-              color="secondary"
-              onClick={handleCancelClick}
-            >
-              Cancelar
-            </Button>
-          </Box>
-        </Box>
-      </Container>
-    </>
+    <FormTodo
+      tiempo={tiempo}
+      setTiempo={setTiempo}
+      tiempoFin={tiempoFin}
+      settiempoFin={settiempoFin}
+      estado={estado}
+      handleEstadoChange={handleEstadoChange}
+      prioridad={prioridad}
+      handlePrioridadChange={handlePrioridadChange}
+      handleInputChange={handleInputChange}
+      handleSubmit={handleSubmit}
+      handleCancelClick={handleCancelClick}
+      formValues={formValues}
+      errors={errors}
+    />
   );
 };
