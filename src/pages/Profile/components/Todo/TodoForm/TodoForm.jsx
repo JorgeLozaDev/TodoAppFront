@@ -7,6 +7,12 @@ import { logout, userDetails } from "../../../../userSlice";
 import { FormTodo } from "./components/FormTodo";
 import updateLocale from "dayjs/plugin/updateLocale";
 import "dayjs/locale/es";
+import { general } from "../../../../../services/apiCalls";
+import {
+  ToastContainer,
+  Toasty,
+} from "../../../../../common/CustomToasty/CustomToasty";
+import { handleAxiosError } from "../../../../../utils/axiosErrorHandler";
 
 dayjs.extend(updateLocale);
 
@@ -25,7 +31,12 @@ export const TodoForm = () => {
   const [formValues, setFormValues] = useState({
     tituloTarea: "",
     descripcion: "",
+    tiempo,
+    tiempoFin,
+    estado,
+    prioridad,
   });
+
   const [errors, setErrors] = useState({
     tituloTarea: "",
     descripcion: "",
@@ -43,8 +54,10 @@ export const TodoForm = () => {
   }, [token, dispatch, navigate]);
 
   const handleEstadoChange = (event) => {
-    setEstado(event.target.value);
-    if (!event.target.value) {
+    const value = event.target.value;
+    setEstado(value);
+    setFormValues((prev) => ({ ...prev, estado: value })); // Actualizar formValues
+    if (!value) {
       setErrors((prev) => ({ ...prev, estado: "El estado es obligatorio" }));
     } else {
       setErrors((prev) => ({ ...prev, estado: "" }));
@@ -52,8 +65,10 @@ export const TodoForm = () => {
   };
 
   const handlePrioridadChange = (event) => {
-    setPrioridad(event.target.value);
-    if (!event.target.value) {
+    const value = event.target.value;
+    setPrioridad(value);
+    setFormValues((prev) => ({ ...prev, prioridad: value })); // Actualizar formValues
+    if (!value) {
       setErrors((prev) => ({
         ...prev,
         prioridad: "La prioridad es obligatoria",
@@ -124,33 +139,43 @@ export const TodoForm = () => {
       // Aquí enviaríamos el formulario si todas las validaciones pasan
       console.log("Formulario enviado:", {
         formValues,
-        estado,
-        prioridad,
-        tiempo,
-        tiempoFin,
       });
+
+      general("post", "todos/addTodo", token.credentials, formValues)
+        .then((data) => {
+          Toasty({
+            message: `Todo creado correctamente`,
+            type: "success",
+          });
+
+          console.log(data);
+        })
+        .catch((error) => {
+          // Manejar el error de Axios utilizando la función importada
+          handleAxiosError(error);
+        });
     }
   };
 
-  const handleCancelClick = () => {
-    // Lógica para manejar el click de "Cancelar"
-  };
 
   return (
-    <FormTodo
-      tiempo={tiempo}
-      setTiempo={setTiempo}
-      tiempoFin={tiempoFin}
-      settiempoFin={settiempoFin}
-      estado={estado}
-      handleEstadoChange={handleEstadoChange}
-      prioridad={prioridad}
-      handlePrioridadChange={handlePrioridadChange}
-      handleInputChange={handleInputChange}
-      handleSubmit={handleSubmit}
-      handleCancelClick={handleCancelClick}
-      formValues={formValues}
-      errors={errors}
-    />
+    <>
+      <ToastContainer />
+      <FormTodo
+        tiempo={tiempo}
+        setTiempo={setTiempo}
+        tiempoFin={tiempoFin}
+        settiempoFin={settiempoFin}
+        estado={estado}
+        handleEstadoChange={handleEstadoChange}
+        prioridad={prioridad}
+        handlePrioridadChange={handlePrioridadChange}
+        handleInputChange={handleInputChange}
+        handleSubmit={handleSubmit}
+        // handleCancelClick={handleCancelClick}
+        formValues={formValues}
+        errors={errors}
+      />
+    </>
   );
 };
