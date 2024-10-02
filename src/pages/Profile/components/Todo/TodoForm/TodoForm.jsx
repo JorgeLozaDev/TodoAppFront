@@ -142,13 +142,15 @@ export const TodoForm = () => {
       });
 
       general("post", "todos/addTodo", token.credentials, formValues)
-        .then((data) => {
+        .then(() => {
           Toasty({
             message: `Todo creado correctamente`,
             type: "success",
           });
 
-          console.log(data);
+          setTimeout(() => {
+            navigate("/profile");
+          }, 2500);
         })
         .catch((error) => {
           // Manejar el error de Axios utilizando la función importada
