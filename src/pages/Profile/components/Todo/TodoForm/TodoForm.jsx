@@ -149,7 +149,7 @@ export const TodoForm = () => {
           });
 
           setTimeout(() => {
-            navigate("/profile");
+            navigate("/profile", { state: { activeTab: 1 } }); 
           }, 2500);
         })
         .catch((error) => {
@@ -158,7 +158,6 @@ export const TodoForm = () => {
         });
     }
   };
-
 
   return (
     <>
