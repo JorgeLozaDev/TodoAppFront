@@ -2,12 +2,11 @@ import { Box, Container, Tab, Tabs, Typography } from "@mui/material";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { isTokenExpired } from "../../utils/helpers";
 import { userDetails } from "../userSlice";
 import { ProfileData } from "./components/ProfileData/ProfileData";
 import { TodoList } from "./components/Todo/TodoList/TodoList";
-
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -17,7 +16,7 @@ function TabPanel(props) {
       role="tabpanel"
       hidden={value !== index}
       id={`vertical-tabpanel-${index}`}
-      aria-labelledby={`vertical-tab-${index}`} 
+      aria-labelledby={`vertical-tab-${index}`}
       {...other}
     >
       {value === index && (
@@ -46,17 +45,23 @@ export const Profile = () => {
   const token = useSelector(userDetails);
   const navigate = useNavigate();
   const [value, setValue] = useState(0);
+  const location = useLocation();
 
   useEffect(() => {
     if (token.credentials === "" || isTokenExpired(token.credentials)) {
       navigate("/");
     }
   }, [token, navigate]);
-  
-  
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  useEffect(() => {
+    if (location.state?.activeTab !== undefined) {
+      setValue(location.state.activeTab); // Cambiar a la pestaña "TO DOS"
+    }
+  }, [location.state]);
 
   return (
     <Container component="main" maxWidth="lg">
@@ -88,7 +93,7 @@ export const Profile = () => {
           <ProfileData userData={token.credentials} />
         </TabPanel>
         <TabPanel value={value} index={1}>
-          <TodoList />
+          <TodoList userData={token.credentials}/>
         </TabPanel>
         <TabPanel value={value} index={2}>
           Orders
