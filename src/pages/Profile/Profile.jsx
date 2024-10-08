@@ -64,7 +64,7 @@ export const Profile = () => {
   }, [location.state]);
 
   return (
-    <Container component="main" maxWidth="lg">
+    <Container component="main" maxWidth="lg" >
       <Typography variant="h4" gutterBottom>
         Perfil
       </Typography>
@@ -74,7 +74,7 @@ export const Profile = () => {
           bgcolor: "background.paper",
           display: "flex",
           alignItems: "center",
-          height: "50vh",
+          // height: "50vh",
         }}
       >
         <Tabs
