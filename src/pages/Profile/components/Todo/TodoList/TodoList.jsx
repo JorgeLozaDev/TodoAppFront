@@ -22,7 +22,7 @@ const CustomNoRowsOverlay = () => {
 };
 
 const columns = [
-  { field: "id", headerName: "ID", width: 70 },
+  { field: "_id", headerName: "ID", width: 70, hide: true },
   { field: "tareaTitulo", headerName: "Tarea", width: 130 },
   { field: "descripcion", headerName: "Descripción", width: 130 },
   { field: "duracion", headerName: "Duración", width: 150 },
@@ -62,8 +62,9 @@ export const TodoList = ({ userData }) => {
 
   const editarTareaSeleccionada = () => {
     if (selectedRows.length === 1) {
-      const selectedRowId = selectedRows[0];
-      navigate(`/profile/todos/edit/${selectedRowId}`);
+      const selectedRowId = selectedRows[0]; // Obtener el ID de la tarea seleccionada
+      // navigate(`/profile/todos/form/${selectedRowId}`); // Redirigir al formulario con el ID para edición
+      console.log(selectedRows);
     }
   };
 
