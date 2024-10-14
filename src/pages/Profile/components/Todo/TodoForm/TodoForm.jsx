@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { isTokenExpired } from "../../../../../utils/helpers";
 import { logout, userDetails } from "../../../../userSlice";
 import { FormTodo } from "./components/FormTodo";
@@ -21,6 +21,7 @@ dayjs.updateLocale("es", {
 });
 
 export const TodoForm = () => {
+  const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const token = useSelector(userDetails);
@@ -149,7 +150,7 @@ export const TodoForm = () => {
           });
 
           setTimeout(() => {
-            navigate("/profile", { state: { activeTab: 1 } }); 
+            navigate("/profile", { state: { activeTab: 1 } });
           }, 2500);
         })
         .catch((error) => {
@@ -158,6 +159,16 @@ export const TodoForm = () => {
         });
     }
   };
+  useEffect(() => {
+    if (id) {
+      general("get", "todos/todo/" + id, token.credentials)
+        .then(() => {})
+        .catch((error) => {
+          // Manejar el error de Axios utilizando la función importada
+          handleAxiosError(error);
+        });
+    }
+  }, []);
 
   return (
     <>
