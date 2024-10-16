@@ -11,7 +11,8 @@ import { logout } from "../../../../userSlice";
 import {
   calcularDuracion,
   actualizarTiempoParaInicio,
-} from "../../../../../utils/timeCalculations"; // Asegúrate de la ruta correcta
+} from "../../../../../utils/timeCalculations"; 
+import  "./Todolist.css";
 
 const CustomNoRowsOverlay = () => {
   return (
@@ -22,7 +23,7 @@ const CustomNoRowsOverlay = () => {
 };
 
 const columns = [
-  { field: "_id", headerName: "ID", width: 70, hide: true },
+  { field: "_id", headerName: "ID",  cellClassName: 'hiddenColumn',headerClassName: 'hiddenHeader' },
   { field: "tareaTitulo", headerName: "Tarea", width: 130 },
   { field: "descripcion", headerName: "Descripción", width: 130 },
   { field: "duracion", headerName: "Duración", width: 150 },
