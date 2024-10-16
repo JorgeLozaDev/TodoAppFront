@@ -1,0 +1,4 @@
+.hiddenColumn,
+.hiddenHeader {
+  display: none !important;
+}
