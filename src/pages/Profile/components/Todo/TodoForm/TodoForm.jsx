@@ -30,7 +30,7 @@ export const TodoForm = () => {
   const [estado, setEstado] = useState("");
   const [prioridad, setPrioridad] = useState("");
   const [formValues, setFormValues] = useState({
-    tituloTarea: "",
+    tarea: "",
     descripcion: "",
     tiempo,
     tiempoFin,
@@ -39,7 +39,7 @@ export const TodoForm = () => {
   });
 
   const [errors, setErrors] = useState({
-    tituloTarea: "",
+    tarea: "",
     descripcion: "",
     tiempo: "",
     tiempoFin: "",
@@ -162,7 +162,17 @@ export const TodoForm = () => {
   useEffect(() => {
     if (id) {
       general("get", "todos/todo/" + id, token.credentials)
-        .then(() => {})
+        .then((response) => {
+          const todo = response.data; // Aquí obtienes los datos de la tarea
+          setFormValues({
+            tarea: todo.tarea,
+            descripcion: todo.descripcion,
+            tiempo: dayjs(todo.fechaInicio),
+            tiempoFin: dayjs(todo.fechaFin),
+            estado: todo.estado,
+            prioridad: todo.prioridad,
+          });
+        })
         .catch((error) => {
           // Manejar el error de Axios utilizando la función importada
           handleAxiosError(error);
