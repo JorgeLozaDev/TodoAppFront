@@ -15,7 +15,7 @@ const Body = () => {
       <Route path="/register" element={<Register />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/profile/todos/list" element={<TodoList />} />
-      <Route path="/profile/todos/form" element={<TodoForm />} />
+      <Route path="/profile/todos/form/:id?" element={<TodoForm />} />
     </Routes>
   );
 };
