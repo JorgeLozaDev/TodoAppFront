@@ -11,8 +11,8 @@ import { logout } from "../../../../userSlice";
 import {
   calcularDuracion,
   actualizarTiempoParaInicio,
-} from "../../../../../utils/timeCalculations"; 
-import  "./Todolist.css";
+} from "../../../../../utils/timeCalculations";
+import "./Todolist.css";
 
 const CustomNoRowsOverlay = () => {
   return (
@@ -23,10 +23,16 @@ const CustomNoRowsOverlay = () => {
 };
 
 const columns = [
-  { field: "_id", headerName: "ID",  cellClassName: 'hiddenColumn',headerClassName: 'hiddenHeader' },
+  {
+    field: "_id",
+    headerName: "ID",
+    cellClassName: "hiddenColumn",
+    headerClassName: "hiddenHeader",
+  },
+  { field: "id", headerName: "Id", width: 50 },
   { field: "tareaTitulo", headerName: "Tarea", width: 130 },
-  { field: "descripcion", headerName: "Descripción", width: 130 },
-  { field: "duracion", headerName: "Duración", width: 150 },
+  { field: "descripcion", headerName: "Descripción", width: 100 },
+  { field: "duracion", headerName: "Duración", width: 120 },
   { field: "tiempoParaInicio", headerName: "Tiempo para inicio", width: 180 },
   { field: "estado", headerName: "Estado", width: 100 },
   { field: "prioridad", headerName: "Prioridad", width: 100 },
@@ -63,9 +69,11 @@ export const TodoList = ({ userData }) => {
 
   const editarTareaSeleccionada = () => {
     if (selectedRows.length === 1) {
-      const selectedRowId = selectedRows[0]; // Obtener el ID de la tarea seleccionada
-      // navigate(`/profile/todos/form/${selectedRowId}`); // Redirigir al formulario con el ID para edición
-      console.log(selectedRows);
+      const cuantos = selectedRows.map((rowId) => {
+        const row = rows.find((r) => r.id === rowId);
+        return row._id; // Usamos el _id de MongoDB para la eliminación
+      });
+      navigate(`/profile/todos/form/${cuantos}`); // Redirigir al formulario con el ID para edición
     }
   };
 
