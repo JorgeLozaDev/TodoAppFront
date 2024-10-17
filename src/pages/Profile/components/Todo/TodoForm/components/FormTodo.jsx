@@ -37,12 +37,12 @@ export const FormTodo = ({
             margin="normal"
             required
             fullWidth
-            id="tituloTarea"
+            id="tarea"
             label="Título de la tarea"
-            name="tituloTarea"
+            name="tarea"
             onChange={handleInputChange}
-            error={!!errors.tituloTarea}
-            helperText={errors.tituloTarea}
+            error={!!errors.tarea}
+            helperText={errors.tarea}
           />
         </Box>
 
