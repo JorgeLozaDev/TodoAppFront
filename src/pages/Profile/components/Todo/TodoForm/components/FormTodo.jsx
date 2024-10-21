@@ -40,6 +40,7 @@ export const FormTodo = ({
             id="tarea"
             label="Título de la tarea"
             name="tarea"
+            value={formValues.tarea || ""}
             onChange={handleInputChange}
             error={!!errors.tarea}
             helperText={errors.tarea}
@@ -61,7 +62,7 @@ export const FormTodo = ({
           {errors.descripcion && (
             <Typography color="error" variant="body2">
               {errors.descripcion}
-            </Typography>  // Mostramos el mensaje de error debajo del textarea
+            </Typography> // Mostramos el mensaje de error debajo del textarea
           )}
         </Box>
 
@@ -71,14 +72,14 @@ export const FormTodo = ({
               sx={{ flex: 1 }}
               label="Fecha inicio"
               disablePast={true}
-              value={tiempo}
+              value={formValues.tiempo}
               onChange={setTiempo}
             />
 
             <MobileDateTimePicker
               label="Fecha fin"
               disablePast={true}
-              value={tiempoFin}
+              value={formValues.tiempoFin}
               onChange={settiempoFin}
               sx={{ flex: 1 }}
             />
@@ -91,7 +92,7 @@ export const FormTodo = ({
             <Select
               labelId="estado-select-label"
               id="estado-select"
-              value={estado}
+              value={formValues.estado}
               label="Estado"
               onChange={handleEstadoChange}
             >
@@ -108,7 +109,7 @@ export const FormTodo = ({
             <Select
               labelId="prioridad-select-label"
               id="prioridad-select"
-              value={prioridad}
+              value={formValues.prioridad}
               label="Prioridad"
               onChange={handlePrioridadChange}
             >

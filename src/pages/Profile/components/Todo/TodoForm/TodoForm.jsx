@@ -56,8 +56,9 @@ export const TodoForm = () => {
 
   const handleEstadoChange = (event) => {
     const value = event.target.value;
-    setEstado(value);
-    setFormValues((prev) => ({ ...prev, estado: value })); // Actualizar formValues
+    setEstado(value); // Actualizamos el estado local
+    setFormValues((prev) => ({ ...prev, estado: value })); // Actualizamos el formValues con el nuevo estado
+
     if (!value) {
       setErrors((prev) => ({ ...prev, estado: "El estado es obligatorio" }));
     } else {
@@ -67,8 +68,9 @@ export const TodoForm = () => {
 
   const handlePrioridadChange = (event) => {
     const value = event.target.value;
-    setPrioridad(value);
-    setFormValues((prev) => ({ ...prev, prioridad: value })); // Actualizar formValues
+    setPrioridad(value); // Actualizamos el estado local
+    setFormValues((prev) => ({ ...prev, prioridad: value })); // Actualizamos el formValues con la nueva prioridad
+
     if (!value) {
       setErrors((prev) => ({
         ...prev,
@@ -105,16 +107,17 @@ export const TodoForm = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     let formIsValid = true;
-
+    console.log(formValues)
+  
     // Validaciones al enviar el formulario
-    if (!formValues.tituloTarea) {
+    if (!formValues.tarea) {
       setErrors((prev) => ({
         ...prev,
-        tituloTarea: "El título es obligatorio",
+        tarea: "El título es obligatorio",
       }));
       formIsValid = false;
     }
-
+  
     if (formValues.descripcion.length < 10) {
       setErrors((prev) => ({
         ...prev,
@@ -122,12 +125,12 @@ export const TodoForm = () => {
       }));
       formIsValid = false;
     }
-
+  
     if (!estado) {
       setErrors((prev) => ({ ...prev, estado: "El estado es obligatorio" }));
       formIsValid = false;
     }
-
+  
     if (!prioridad) {
       setErrors((prev) => ({
         ...prev,
@@ -135,30 +138,52 @@ export const TodoForm = () => {
       }));
       formIsValid = false;
     }
-
+  
     if (formIsValid) {
-      // Aquí enviaríamos el formulario si todas las validaciones pasan
-      console.log("Formulario enviado:", {
-        formValues,
-      });
-
-      general("post", "todos/addTodo", token.credentials, formValues)
-        .then(() => {
-          Toasty({
-            message: `Todo creado correctamente`,
-            type: "success",
+      const todoData = {
+        ...formValues,
+        estado,
+        prioridad,
+        tiempo,
+        tiempoFin,
+      };
+  
+      if (id) {
+        // Si hay ID, es una actualización
+        general("put", `todos/updateTodo/${id}`, token.credentials, todoData)
+          .then(() => {
+            Toasty({
+              message: `Todo actualizado correctamente`,
+              type: "success",
+            });
+  
+            setTimeout(() => {
+              navigate("/profile", { state: { activeTab: 1 } });
+            }, 2500);
+          })
+          .catch((error) => {
+            handleAxiosError(error);
           });
-
-          setTimeout(() => {
-            navigate("/profile", { state: { activeTab: 1 } });
-          }, 2500);
-        })
-        .catch((error) => {
-          // Manejar el error de Axios utilizando la función importada
-          handleAxiosError(error);
-        });
+      } else {
+        // Si no hay ID, es creación
+        general("post", "todos/addTodo", token.credentials, todoData)
+          .then(() => {
+            Toasty({
+              message: `Todo creado correctamente`,
+              type: "success",
+            });
+  
+            setTimeout(() => {
+              navigate("/profile", { state: { activeTab: 1 } });
+            }, 2500);
+          })
+          .catch((error) => {
+            handleAxiosError(error);
+          });
+      }
     }
   };
+  
   useEffect(() => {
     if (id) {
       general("get", "todos/todo/" + id, token.credentials)
