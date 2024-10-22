@@ -85,12 +85,12 @@ export const TodoForm = () => {
     const { name, value } = event.target;
     setFormValues({ ...formValues, [name]: value });
 
-    if (name === "tituloTarea" && !value) {
+    if (name === "tarea" && !value) {
       setErrors((prev) => ({
         ...prev,
         tituloTarea: "El título es obligatorio",
       }));
-    } else if (name === "tituloTarea") {
+    } else if (name === "tarea") {
       setErrors((prev) => ({ ...prev, tituloTarea: "" }));
     }
 
@@ -107,8 +107,9 @@ export const TodoForm = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     let formIsValid = true;
-    console.log(formValues)
-  
+    console.log(formValues);
+    console.log(id);
+
     // Validaciones al enviar el formulario
     if (!formValues.tarea) {
       setErrors((prev) => ({
@@ -117,7 +118,7 @@ export const TodoForm = () => {
       }));
       formIsValid = false;
     }
-  
+
     if (formValues.descripcion.length < 10) {
       setErrors((prev) => ({
         ...prev,
@@ -125,38 +126,44 @@ export const TodoForm = () => {
       }));
       formIsValid = false;
     }
-  
-    if (!estado) {
+
+    // if (!estado) {
+    if (!formValues.estado) {
       setErrors((prev) => ({ ...prev, estado: "El estado es obligatorio" }));
       formIsValid = false;
     }
-  
-    if (!prioridad) {
+
+    // if (!prioridad) {
+    if (!formValues.prioridad) {
       setErrors((prev) => ({
         ...prev,
         prioridad: "La prioridad es obligatoria",
       }));
       formIsValid = false;
     }
-  
+
     if (formIsValid) {
-      const todoData = {
+      let todoData = {
         ...formValues,
-        estado,
-        prioridad,
+        // estado,
+        // prioridad,
         tiempo,
         tiempoFin,
       };
-  
+
       if (id) {
         // Si hay ID, es una actualización
+        todoData = {
+          ...formValues,
+          id,
+        };
         general("put", `todos/updateTodo/${id}`, token.credentials, todoData)
           .then(() => {
             Toasty({
               message: `Todo actualizado correctamente`,
               type: "success",
             });
-  
+
             setTimeout(() => {
               navigate("/profile", { state: { activeTab: 1 } });
             }, 2500);
@@ -172,7 +179,7 @@ export const TodoForm = () => {
               message: `Todo creado correctamente`,
               type: "success",
             });
-  
+
             setTimeout(() => {
               navigate("/profile", { state: { activeTab: 1 } });
             }, 2500);
@@ -183,7 +190,7 @@ export const TodoForm = () => {
       }
     }
   };
-  
+
   useEffect(() => {
     if (id) {
       general("get", "todos/todo/" + id, token.credentials)
